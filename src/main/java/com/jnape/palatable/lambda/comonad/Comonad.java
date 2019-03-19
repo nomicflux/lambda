@@ -13,11 +13,11 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * a function which uses the global state of the Comonad to produce a new local result
  * at each point to yield a new Comonad.
  * <p>
- * Comonad laws (to be filled out later in Java):
+ * Comonad laws:
  * <ul>
- * <li>left identity: <code>extend extract == id</code></li>
- * <li>right identity: <code>extract . extend f == f</code></li>
- * <li>associativity: <code>extend f . extend g == extend (f . extend g)</code></li>
+ * <li>left identity: <code>w.extend(wa -&gt; wa.extract()).equals(w)</code></li>
+ * <li>right identity: <code>w.extend(f).extract().equals(a -&gt; f.apply(a))</code></li>
+ * <li>associativity: <code>w.extend(f).extend(g).equals(w.extend(wa -&gt; g(wa.extend(f))))</code></li>
  * </ul>
  *
  * @param <A> the type of the value the Comonad stores
