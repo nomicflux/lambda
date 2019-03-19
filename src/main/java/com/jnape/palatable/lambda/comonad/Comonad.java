@@ -3,6 +3,8 @@ package com.jnape.palatable.lambda.comonad;
 import com.jnape.palatable.lambda.functions.builtin.fn1.Id;
 import com.jnape.palatable.lambda.functor.Functor;
 
+import com.jnape.palatable.lambda.monad.Monad;
+
 import java.util.function.Function;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
@@ -33,11 +35,12 @@ public interface Comonad<A, W extends Comonad> extends Functor<A, W> {
     A extract();
 
     /**
-     * Extend a function Fn<Comonad<A, W>, B> over a Comonad.  This allows for computations which use global knowledge to yield a local result.
+     * Extend a function Fn&lt;Comonad&lt;A, W&gt;, B&gt; over a Comonad.  This allows for computations which use global knowledge to yield a local result.
+     *
      * For example, think of blurring an image, where the new pixel relies on the surrounding pixels, or of producing the next step in a generic cellular automaton.
      *
-     * @param f    the function using the global state Comonad<A, W> to produce a B
-     * @param <B>  the resulting B at each point in the resulting Comonad<B, W>
+     * @param f    the function using the global state Comonad&lt;A, W&gt; to produce a B
+     * @param <B>  the resulting B at each point in the resulting Comonad&lt;B, W&gt;
      * @return     the new Comonad instance
      */
     <B> Comonad<B, W> extend(Function<? super Comonad<A, W>, ? extends B> f);
@@ -51,9 +54,12 @@ public interface Comonad<A, W extends Comonad> extends Functor<A, W> {
     }
 
     /**
-     * Duplicate a Comonad<A, W> to a Comonad<Comonad<A, W>, W>
+     * Duplicate a Comonad&lt;A, W&gt; to a Comonad&lt;Comonad&lt;A, W&gt;, W&gt;.
+     *
      * Essentially, for the case of a non-empty data structure with a cursor, this produces that data structure with the cursor at all possible locations.
+     *
      * It may be worth finding a way to do this lazily, as a Comonad can often be thought of as representing a state space (potentially infinite), with a Monad then used to traverse a specific path through it.
+     *
      * `extend` is left to be implemented, and `duplicate` is given a definition based off of it, in symmetry with `Monad`.
      * However, it might be better to reverse this for `Comonad`, as there may be a more natural definition for `duplicate` in an implementation for the interface.
      *
