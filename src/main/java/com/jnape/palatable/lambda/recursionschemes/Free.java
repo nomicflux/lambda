@@ -22,7 +22,7 @@ import static com.jnape.palatable.lambda.recursionschemes.builtin.Anamorphism.an
  * @param <F>     the functor unification type
  * @param <FreeF> the type corresponding to the functor that wraps Free
  */
-public interface Free<A, F extends Functor, FreeF extends Functor<?, F>> extends CoProduct2<A, FreeF> {
+public interface Free<A, F extends Functor, FreeF extends Functor<?, F>> extends CoProduct2<A, FreeF, Free<A, F, FreeF>> {
 
     /**
      * Given a {@link Coalgebra}, recursively fold this <code>Free</code> into a {@link Fix}. Note that this is only
