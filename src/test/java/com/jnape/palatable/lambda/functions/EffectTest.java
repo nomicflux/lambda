@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static com.jnape.palatable.lambda.adt.Unit.UNIT;
 import static com.jnape.palatable.lambda.functions.Effect.effect;
 import static com.jnape.palatable.lambda.functions.Effect.fromConsumer;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
+import static com.jnape.palatable.lambda.functions.specialized.SideEffect.sideEffect;
+import static com.jnape.palatable.lambda.io.IO.io;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -37,11 +38,20 @@ public class EffectTest {
     }
 
     @Test
+    public void andThen() {
+        AtomicInteger         counter = new AtomicInteger();
+        Effect<AtomicInteger> inc     = c -> io(sideEffect(c::incrementAndGet));
+
+        inc.andThen(inc).apply(counter).unsafePerformIO();
+        assertEquals(2, counter.get());
+    }
+
+    @Test
     public void staticFactoryMethods() {
         AtomicInteger counter = new AtomicInteger();
 
-        Effect<Unit> runnableEffect = effect(counter::incrementAndGet);
-        runnableEffect.apply(UNIT).unsafePerformIO();
+        Effect<String> sideEffect = effect(counter::incrementAndGet);
+        sideEffect.apply("foo").unsafePerformIO();
         assertEquals(1, counter.get());
 
         Effect<AtomicInteger> fnEffect = Effect.fromConsumer(AtomicInteger::incrementAndGet);

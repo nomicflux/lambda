@@ -5,13 +5,13 @@ import com.jnape.palatable.lambda.adt.choice.Choice3;
 import com.jnape.palatable.lambda.adt.coproduct.CoProduct2;
 import com.jnape.palatable.lambda.adt.hlist.HList;
 import com.jnape.palatable.lambda.adt.hlist.Tuple2;
-import com.jnape.palatable.lambda.functions.Effect;
 import com.jnape.palatable.lambda.functions.Fn0;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.builtin.fn2.Peek;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.builtin.Lazy;
+import com.jnape.palatable.lambda.io.IO;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -206,15 +206,14 @@ public abstract class Maybe<A> implements
      * @param effect the consumer
      * @return the same Maybe instance
      */
-    public final Maybe<A> peek(Effect<A> effect) {
+    public final Maybe<A> peek(Fn1<? super A, ? extends IO<?>> effect) {
         return Peek.peek(effect, this);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final <B, App extends Applicative<?, App>, TravB extends Traversable<B, Maybe<?>>,
-            AppB extends Applicative<B, App>,
-            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Fn1<? super A, ? extends AppB> fn,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Fn1<? super A, ? extends Applicative<B, App>> fn,
                                                                       Fn1<? super TravB, ? extends AppTrav> pure) {
         return match(__ -> pure.apply((TravB) Maybe.<B>nothing()), a -> (AppTrav) fn.apply(a).fmap(Maybe::just));
     }

@@ -2,7 +2,6 @@ package com.jnape.palatable.lambda.adt;
 
 import com.jnape.palatable.lambda.adt.choice.Choice3;
 import com.jnape.palatable.lambda.adt.coproduct.CoProduct2;
-import com.jnape.palatable.lambda.functions.Effect;
 import com.jnape.palatable.lambda.functions.Fn0;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.Fn2;
@@ -12,6 +11,7 @@ import com.jnape.palatable.lambda.functions.specialized.SideEffect;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
 import com.jnape.palatable.lambda.functor.builtin.Lazy;
+import com.jnape.palatable.lambda.io.IO;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -165,7 +165,7 @@ public abstract class Either<L, R> implements
      * @param effect the effecting consumer
      * @return the Either, unaltered
      */
-    public Either<L, R> peek(Effect<R> effect) {
+    public Either<L, R> peek(Fn1<? super R, ? extends IO<?>> effect) {
         return Peek.peek(effect, this);
     }
 
@@ -176,7 +176,7 @@ public abstract class Either<L, R> implements
      * @param rightEffect the effecting consumer for right values
      * @return the Either, unaltered
      */
-    public Either<L, R> peek(Effect<L> leftEffect, Effect<R> rightEffect) {
+    public Either<L, R> peek(Fn1<? super L, ? extends IO<?>> leftEffect, Fn1<? super R, ? extends IO<?>> rightEffect) {
         return Peek2.peek2(leftEffect, rightEffect, this);
     }
 
@@ -282,8 +282,7 @@ public abstract class Either<L, R> implements
     @Override
     @SuppressWarnings("unchecked")
     public final <R2, App extends Applicative<?, App>, TravB extends Traversable<R2, Either<L, ?>>,
-            AppB extends Applicative<R2, App>,
-            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Fn1<? super R, ? extends AppB> fn,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Fn1<? super R, ? extends Applicative<R2, App>> fn,
                                                                       Fn1<? super TravB, ? extends AppTrav> pure) {
         return (AppTrav) match(l -> pure.apply((TravB) left(l)), r -> fn.apply(r).fmap(Either::right));
     }

@@ -47,6 +47,16 @@ public interface Effect<A> extends Fn1<A, IO<Unit>> {
     }
 
     /**
+     * Left-to-right composition of {@link Effect Effects}.
+     *
+     * @param effect the other {@link Effect}
+     * @return the composed {@link Effect}
+     */
+    default Effect<A> andThen(Effect<A> effect) {
+        return a -> apply(a).flatMap(constantly(effect.apply(a)));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -87,7 +97,7 @@ public interface Effect<A> extends Fn1<A, IO<Unit>> {
      * @param sideEffect the {@link SideEffect}
      * @return the {@link Effect}
      */
-    static Effect<Unit> effect(SideEffect sideEffect) {
+    static <A> Effect<A> effect(SideEffect sideEffect) {
         return effect(constantly(io(sideEffect)));
     }
 
@@ -98,7 +108,7 @@ public interface Effect<A> extends Fn1<A, IO<Unit>> {
      */
     @SuppressWarnings("unused")
     static <A> Effect<A> noop() {
-        return effect(NOOP).contraMap(constantly(UNIT));
+        return effect(NOOP);
     }
 
     /**
