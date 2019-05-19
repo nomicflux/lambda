@@ -2,6 +2,7 @@ package com.jnape.palatable.lambda.adt.hlist;
 
 import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.product.Product4;
+import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
@@ -28,6 +29,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
 public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implements
         Product4<_1, _2, _3, _4>,
         Monad<_4, Tuple4<_1, _2, _3, ?>>,
+        Comonad<_4, Tuple4<_1, _2, _3, ?>>,
         Bifunctor<_3, _4, Tuple4<_1, _2, ?, ?>>,
         Traversable<_4, Tuple4<_1, _2, _3, ?>> {
 
@@ -92,6 +94,16 @@ public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implem
     @Override
     public Tuple4<_2, _1, _3, _4> invert() {
         return tuple(_2, _1, _3, _4);
+    }
+
+    @Override
+    public _4 extract() {
+        return _4();
+    }
+
+    @Override
+    public <B> Comonad<B, Tuple4<_1, _2, _3, ?>> extend(Fn1<? super Comonad<_4, Tuple4<_1, _2, _3, ?>>, ? extends B> f) {
+        return fmap(constantly(f.apply(this)));
     }
 
     @Override

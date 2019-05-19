@@ -2,11 +2,14 @@ package com.jnape.palatable.lambda.adt.hlist;
 
 import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.hlist.HList.HNil;
+import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.builtin.Lazy;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
+
+import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
 
 /**
  * A singleton HList. Supports random access.
@@ -20,6 +23,7 @@ import com.jnape.palatable.lambda.traversable.Traversable;
  */
 public class SingletonHList<_1> extends HCons<_1, HNil> implements
         Monad<_1, SingletonHList<?>>,
+        Comonad<_1, SingletonHList<?>>,
         Traversable<_1, SingletonHList<?>> {
 
     SingletonHList(_1 _1) {
@@ -29,6 +33,16 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements
     @Override
     public <_0> Tuple2<_0, _1> cons(_0 _0) {
         return new Tuple2<>(_0, this);
+    }
+
+    @Override
+    public _1 extract() {
+        return head();
+    }
+
+    @Override
+    public <B> Comonad<B, SingletonHList<?>> extend(Fn1<? super Comonad<_1, SingletonHList<?>>, ? extends B> f) {
+        return fmap(constantly(f.apply(this)));
     }
 
     @Override

@@ -67,8 +67,8 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
     *
     * @return the unfolded Comonad across all possible cursors
    */
-   default Comonad<? super Comonad<A, W>, W> duplicate() {
-       return this.extend(id());
+   static <A, W extends Comonad<?, W>> Comonad<Comonad<A, W>, W> duplicate(Comonad<A, W> w) {
+       return w.extend(id());
    }
 }
 
