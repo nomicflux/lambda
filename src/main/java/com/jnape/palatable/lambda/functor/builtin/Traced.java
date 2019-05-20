@@ -13,9 +13,8 @@ public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Trace
         this.aMonoid = m;
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, M extends Monoid<A>, B> Traced<A, M, B> traced(Fn1<? super A, ? extends B> t, Monoid<A> m) {
-        return new Traced(t, m);
+        return new Traced<>(t, m);
     }
 
     @Override

@@ -7,7 +7,11 @@ import com.jnape.palatable.traitor.runners.Traits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import testsupport.traits.*;
+import testsupport.traits.ApplicativeLaws;
+import testsupport.traits.BifunctorLaws;
+import testsupport.traits.FunctorLaws;
+import testsupport.traits.MonadLaws;
+import testsupport.traits.TraversableLaws;
 
 import static com.jnape.palatable.lambda.adt.hlist.HList.tuple;
 import static org.junit.Assert.assertEquals;
@@ -26,7 +30,7 @@ public class Tuple6Test {
         tuple6 = new Tuple6<>(2.0f, new Tuple5<>(1, new Tuple4<>("2", new Tuple3<>('3', new Tuple2<>(false, new SingletonHList<>(5L))))));
     }
 
-    @TestTraits({FunctorLaws.class, ApplicativeLaws.class, MonadLaws.class,  ComonadLaws.class, BifunctorLaws.class, TraversableLaws.class})
+    @TestTraits({FunctorLaws.class, ApplicativeLaws.class, MonadLaws.class, BifunctorLaws.class, TraversableLaws.class})
     public Tuple6<?, ?, ?, ?, ?, ?> testSubject() {
         return tuple("one", 2, 3d, 4f, '5', (byte) 6);
     }

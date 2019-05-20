@@ -14,7 +14,6 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Upcast.upcast;
 import static java.util.Arrays.asList;
 
 public class ComonadLaws<W extends Comonad<?, W>> implements Trait<Comonad<?, W>> {
-
     @Override
     public void test(Comonad<?, W> w) {
         Present.<String>present((x, y) -> x + "\n\t - " + y)

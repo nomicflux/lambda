@@ -5,7 +5,10 @@ import com.jnape.palatable.traitor.runners.Traits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import testsupport.traits.*;
+import testsupport.traits.ApplicativeLaws;
+import testsupport.traits.FunctorLaws;
+import testsupport.traits.MonadLaws;
+import testsupport.traits.TraversableLaws;
 
 import static com.jnape.palatable.lambda.adt.hlist.HList.nil;
 import static com.jnape.palatable.lambda.adt.hlist.HList.singletonHList;
@@ -21,7 +24,7 @@ public class SingletonHListTest {
         singletonHList = new SingletonHList<>(1);
     }
 
-    @TestTraits({FunctorLaws.class, ApplicativeLaws.class, MonadLaws.class,  ComonadLaws.class, TraversableLaws.class})
+    @TestTraits({FunctorLaws.class, ApplicativeLaws.class, MonadLaws.class, TraversableLaws.class})
     public SingletonHList<?> testSubject() {
         return singletonHList("one");
     }
