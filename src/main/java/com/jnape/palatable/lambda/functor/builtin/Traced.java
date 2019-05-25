@@ -23,7 +23,7 @@ public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Trace
     }
 
     @Override
-    public <B1> Traced<A, M, B1> extend(Fn1<? super Comonad<B, Traced<A, M, ?>>, ? extends B1> f) {
+    public <B1> Comonad<B1, Traced<A, M, ?>> extendImpl(Fn1<? super Comonad<B, Traced<A, M, ?>>, ? extends B1> f) {
         return traced(a -> f.apply(traced(trace.diMapL(aMonoid.apply(a)), aMonoid)), aMonoid);
     }
 }

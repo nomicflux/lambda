@@ -84,7 +84,7 @@ public class Tuple3<_1, _2, _3> extends HCons<_1, Tuple2<_2, _3>> implements
     }
 
     @Override
-    public <B> Comonad<B, Tuple3<_1, _2, ?>> extend(Fn1<? super Comonad<_3, Tuple3<_1, _2, ?>>, ? extends B> f) {
+    public <B> Comonad<B, Tuple3<_1, _2, ?>> extendImpl(Fn1<? super Comonad<_3, Tuple3<_1, _2, ?>>, ? extends B> f) {
         return fmap(constantly(f.apply(this)));
     }
 

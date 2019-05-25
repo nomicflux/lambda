@@ -1,6 +1,7 @@
 package com.jnape.palatable.lambda.comonad;
 
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functions.builtin.fn1.Downcast;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.monad.Monad;
 
@@ -43,8 +44,23 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
      * Default implementation in terms of duplicate would be `return this.duplicate().fmap(f);`
      *
      */
-   <B> Comonad<B, W> extend(Fn1<? super Comonad<A, W>, ? extends B> f);
+   <B> Comonad<B, W> extendImpl(Fn1<? super Comonad<A, W>, ? extends B> f);
 
+    /**
+     * Extend a function Fn&lt;Comonad&lt;A, W&gt;, B&gt; over a Comonad.  This allows for computations which use global knowledge to yield a local result.
+     * <p>
+     * For example, think of blurring an image, where the new pixel relies on the surrounding pixels, or of producing the next step in a generic cellular automaton.
+     *
+     * @param f      the function using the global state Comonad&lt;A, W&gt; to produce a B
+     * @param <B>    the resulting B at each point in the resulting Comonad&lt;B, W&gt;
+     * @return the new Comonad instance
+     *
+     * Default implementation in terms of duplicate would be `return this.duplicate().fmap(f);`
+     *
+     */
+   default <B, WA extends Comonad<A, W>> Comonad<B, W> extend(Fn1<? super WA, ? extends B> f) {
+       return extendImpl(f.contraMap(Downcast::<WA, Comonad<A, W>>downcast));
+   }
    /**
     * {@inheritDoc}
     */

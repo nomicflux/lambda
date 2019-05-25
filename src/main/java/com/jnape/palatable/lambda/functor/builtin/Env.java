@@ -4,8 +4,6 @@ import com.jnape.palatable.lambda.adt.product.Product2;
 import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
 
-import static com.jnape.palatable.lambda.functions.Fn1.fn1;
-
 public final class Env<E, A> implements Comonad<A, Env<E, ?>>, Product2<E, A> {
     private E env;
     private A value;
@@ -33,8 +31,8 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, Product2<E, A> {
     }
 
     @Override
-    public <B> Comonad<B, Env<E, ?>> extend(Fn1<? super Comonad<A, Env<E, ?>>, ? extends B> f) {
-        return Env.<E, B>env(env, null);
+    public <B> Env<E, B> extendImpl(Fn1<? super Comonad<A, Env<E, ?>>, ? extends B> f) {
+        return env(env, f.apply(this));
     }
 
     @Override
@@ -52,5 +50,6 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, Product2<E, A> {
         System.out.println(hello.ask());
         System.out.println(hello.extract());
         System.out.println(hello.extend(e -> 1 + e.extract()));
+        System.out.println(hello.extend((Env<String, Integer> e) -> 1 + e.ask().length()));
     }
 }

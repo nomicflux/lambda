@@ -84,7 +84,7 @@ public class Tuple2<_1, _2> extends HCons<_1, SingletonHList<_2>> implements
     }
 
     @Override
-    public <B> Comonad<B, Tuple2<_1, ?>> extend(Fn1<? super Comonad<_2, Tuple2<_1, ?>>, ? extends B> f) {
+    public <B> Comonad<B, Tuple2<_1, ?>> extendImpl(Fn1<? super Comonad<_2, Tuple2<_1, ?>>, ? extends B> f) {
         return fmap(constantly(f.apply(this)));
     }
 

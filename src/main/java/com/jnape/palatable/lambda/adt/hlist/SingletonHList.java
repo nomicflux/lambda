@@ -41,7 +41,7 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements
     }
 
     @Override
-    public <B> Comonad<B, SingletonHList<?>> extend(Fn1<? super Comonad<_1, SingletonHList<?>>, ? extends B> f) {
+    public <B> Comonad<B, SingletonHList<?>> extendImpl(Fn1<? super Comonad<_1, SingletonHList<?>>, ? extends B> f) {
         return fmap(constantly(f.apply(this)));
     }
 

@@ -158,7 +158,7 @@ public class Tuple7<_1, _2, _3, _4, _5, _6, _7> extends HCons<_1, Tuple6<_2, _3,
     }
 
     @Override
-    public <B> Comonad<B, Tuple7<_1, _2, _3, _4, _5, _6, ?>> extend(Fn1<? super Comonad<_7, Tuple7<_1, _2, _3, _4, _5, _6, ?>>, ? extends B> f) {
+    public <B> Comonad<B, Tuple7<_1, _2, _3, _4, _5, _6, ?>> extendImpl(Fn1<? super Comonad<_7, Tuple7<_1, _2, _3, _4, _5, _6, ?>>, ? extends B> f) {
         return fmap(constantly(f.apply(this)));
     }
 

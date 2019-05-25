@@ -8,6 +8,8 @@ import com.jnape.palatable.lambda.traversable.Traversable;
 
 import java.util.Objects;
 
+import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
+
 /**
  * A functor over some value of type <code>A</code> that can be mapped over and retrieved later.
  *
@@ -50,8 +52,8 @@ public final class Identity<A> implements Monad<A, Identity<?>>, Traversable<A, 
      * {@inheritDoc}
      */
     @Override
-    public <B> Comonad<B, Identity<?>> extend(Fn1<? super Comonad<A, Identity<?>>, ? extends B> f) {
-        return new Identity<>(f.apply(this));
+    public <B> Comonad<B, Identity<?>> extendImpl(Fn1<? super Comonad<A, Identity<?>>, ? extends B> f) {
+        return fmap(constantly(f.apply(this)));
     }
 
     /**

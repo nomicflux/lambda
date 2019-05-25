@@ -32,7 +32,6 @@ public interface Cokleisli<A, B, W extends Comonad<?, W>> extends Fn1<Comonad<A,
      * @param <Z>    the new input argument type
      * @return the composition of the two arrows as a new {@link Cokleisli} arrow
      */
-    @SuppressWarnings("overloads")
     default <Z> Cokleisli<Z, B, W> compose(Cokleisli<Z, A, W> before) {
         return wz -> this.apply(wz.extend(before));
     }
@@ -46,8 +45,7 @@ public interface Cokleisli<A, B, W extends Comonad<?, W>> extends Fn1<Comonad<A,
      * @param <W>  the {@link Comonad} unification parameter
      * @return the function adapted as a {@link Cokleisli} arrow
      */
-    static <A, B, W extends Comonad<?, W>> Cokleisli<A, B, W> cokleisli(
-            Fn1<? super Comonad<A, W>, ? extends B> fn) {
+    static <A, B, W extends Comonad<?, W>> Cokleisli<A, B, W> cokleisli(Fn1<? super Comonad<A, W>, ? extends B> fn) {
         return fn::apply;
     }
 }

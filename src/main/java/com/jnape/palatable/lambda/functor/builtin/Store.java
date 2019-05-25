@@ -22,7 +22,7 @@ public final class Store<S, A> implements Comonad<A, Store<S, ?>> {
     }
 
     @Override
-    public <B> Comonad<B, Store<S, ?>> extend(Fn1<? super Comonad<A, Store<S, ?>>, ? extends B> f) {
+    public <B> Comonad<B, Store<S, ?>> extendImpl(Fn1<? super Comonad<A, Store<S, ?>>, ? extends B> f) {
         return store(s -> f.apply(store(peek, s)), cursor);
     }
 }
