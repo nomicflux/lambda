@@ -23,7 +23,6 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
  */
 public class SingletonHList<_1> extends HCons<_1, HNil> implements
         Monad<_1, SingletonHList<?>>,
-        Comonad<_1, SingletonHList<?>>,
         Traversable<_1, SingletonHList<?>> {
 
     SingletonHList(_1 _1) {
@@ -33,16 +32,6 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements
     @Override
     public <_0> Tuple2<_0, _1> cons(_0 _0) {
         return new Tuple2<>(_0, this);
-    }
-
-    @Override
-    public _1 extract() {
-        return head();
-    }
-
-    @Override
-    public <B> Comonad<B, SingletonHList<?>> extendImpl(Fn1<? super Comonad<_1, SingletonHList<?>>, ? extends B> f) {
-        return fmap(constantly(f.apply(this)));
     }
 
     @Override

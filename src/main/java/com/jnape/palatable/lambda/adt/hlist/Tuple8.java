@@ -36,7 +36,6 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
 public class Tuple8<_1, _2, _3, _4, _5, _6, _7, _8> extends HCons<_1, Tuple7<_2, _3, _4, _5, _6, _7, _8>> implements
         Product8<_1, _2, _3, _4, _5, _6, _7, _8>,
         Monad<_8, Tuple8<_1, _2, _3, _4, _5, _6, _7, ?>>,
-        Comonad<_8, Tuple8<_1, _2, _3, _4, _5, _6, _7, ?>>,
         Bifunctor<_7, _8, Tuple8<_1, _2, _3, _4, _5, _6, ?, ?>>,
         Traversable<_8, Tuple8<_1, _2, _3, _4, _5, _6, _7, ?>> {
 
@@ -169,16 +168,6 @@ public class Tuple8<_1, _2, _3, _4, _5, _6, _7, _8> extends HCons<_1, Tuple7<_2,
     @Override
     public Tuple8<_2, _1, _3, _4, _5, _6, _7, _8> invert() {
         return tuple(_2, _1, _3, _4, _5, _6, _7, _8);
-    }
-
-    @Override
-    public _8 extract() {
-        return _8();
-    }
-
-    @Override
-    public <B> Comonad<B, Tuple8<_1, _2, _3, _4, _5, _6, _7, ?>> extendImpl(Fn1<? super Comonad<_8, Tuple8<_1, _2, _3, _4, _5, _6, _7, ?>>, ? extends B> f) {
-        return fmap(constantly(f.apply(this)));
     }
 
     @Override

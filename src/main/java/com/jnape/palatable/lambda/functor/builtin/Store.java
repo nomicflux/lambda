@@ -2,6 +2,7 @@ package com.jnape.palatable.lambda.functor.builtin;
 
 import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functor.Functor;
 
 public final class Store<S, A> implements Comonad<A, Store<S, ?>> {
     private Fn1<? super S, ? extends A> peek;
@@ -12,7 +13,7 @@ public final class Store<S, A> implements Comonad<A, Store<S, ?>> {
         this.cursor = s;
     }
 
-    public static <S, A> Store<S, A> store(Fn1<? super S, ? extends A> f, S s)  {
+    public static <S, A> Store<S, A> store(Fn1<? super S, ? extends A> f, S s) {
         return new Store<>(f, s);
     }
 

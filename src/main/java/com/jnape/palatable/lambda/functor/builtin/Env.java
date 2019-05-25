@@ -3,6 +3,13 @@ package com.jnape.palatable.lambda.functor.builtin;
 import com.jnape.palatable.lambda.adt.product.Product2;
 import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functions.builtin.fn1.Id;
+import com.jnape.palatable.lambda.functor.Functor;
+
+import java.util.Objects;
+
+import static com.jnape.palatable.lambda.adt.hlist.HList.tuple;
+import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 
 public final class Env<E, A> implements Comonad<A, Env<E, ?>>, Product2<E, A> {
     private E env;
@@ -45,11 +52,36 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, Product2<E, A> {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return env.toString() + ": " + value.toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Env && Objects.equals(value, ((Env) other).value) && Objects.equals(env, ((Env) other).env);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tuple(env, value));
+    }
+
     public static void main(String[] args) {
         Env<String, Integer> hello = env("hello", 1);
         System.out.println(hello.ask());
         System.out.println(hello.extract());
-        System.out.println(hello.extend(e -> 1 + e.extract()));
-        System.out.println(hello.extend((Env<String, Integer> e) -> 1 + e.ask().length()));
+        System.out.println(hello.extend(e -> 1 + e.extract()).toString());
+        System.out.println(hello.extend((Env<String, Integer> e) -> e.ask() + e.ask().length() + "!!"));
+        System.out.println(hello.fmap(id()));
+        System.out.println(hello.fmap(x -> x * 2));
+        System.out.println(hello.fmap(x -> x.toString() + "!"));
+        System.out.println(Comonad.duplicate(hello));
+    }
+
+    @Override
+    public <B> Env<E, B> fmap(Fn1<? super A, ? extends B> fn) {
+        //return Comonad.super.<B>fmap(fn).coerce();
+        return env(env, fn.apply(value));
     }
 }

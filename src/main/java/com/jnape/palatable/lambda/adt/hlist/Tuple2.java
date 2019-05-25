@@ -30,7 +30,6 @@ public class Tuple2<_1, _2> extends HCons<_1, SingletonHList<_2>> implements
         Product2<_1, _2>,
         Map.Entry<_1, _2>,
         Monad<_2, Tuple2<_1, ?>>,
-        Comonad<_2, Tuple2<_1, ?>>,
         Bifunctor<_1, _2, Tuple2<?, ?>>,
         Traversable<_2, Tuple2<_1, ?>> {
 
@@ -76,16 +75,6 @@ public class Tuple2<_1, _2> extends HCons<_1, SingletonHList<_2>> implements
     @Override
     public Tuple2<_2, _1> invert() {
         return tuple(_2, _1);
-    }
-
-    @Override
-    public _2 extract() {
-        return _2();
-    }
-
-    @Override
-    public <B> Comonad<B, Tuple2<_1, ?>> extendImpl(Fn1<? super Comonad<_2, Tuple2<_1, ?>>, ? extends B> f) {
-        return fmap(constantly(f.apply(this)));
     }
 
     @Override

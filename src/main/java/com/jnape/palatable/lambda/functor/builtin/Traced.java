@@ -2,6 +2,7 @@ package com.jnape.palatable.lambda.functor.builtin;
 
 import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.monoid.Monoid;
 
 public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Traced<A, M, ?>> {

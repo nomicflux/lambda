@@ -61,6 +61,7 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
    default <B, WA extends Comonad<A, W>> Comonad<B, W> extend(Fn1<? super WA, ? extends B> f) {
        return extendImpl(f.contraMap(Downcast::<WA, Comonad<A, W>>downcast));
    }
+
    /**
     * {@inheritDoc}
     */
