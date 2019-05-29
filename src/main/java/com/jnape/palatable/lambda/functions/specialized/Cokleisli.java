@@ -2,6 +2,7 @@ package com.jnape.palatable.lambda.functions.specialized;
 
 import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functions.builtin.fn1.Downcast;
 
 /**
  * The Cokleisli arrow of a {@link Comonad}, manifest as simply an <code>{@link Fn1}&lt;WA, B&gt;</code>. This can be
@@ -45,7 +46,7 @@ public interface Cokleisli<A, B, W extends Comonad<?, W>> extends Fn1<Comonad<A,
      * @param <W>  the {@link Comonad} unification parameter
      * @return the function adapted as a {@link Cokleisli} arrow
      */
-    static <A, B, W extends Comonad<?, W>> Cokleisli<A, B, W> cokleisli(Fn1<? super Comonad<A, W>, ? extends B> fn) {
-        return fn::apply;
+    static <A, B, W extends Comonad<?, W>, WA extends Comonad<A, W>> Cokleisli<A, B, W> cokleisli(Fn1<? super WA, ? extends B> fn) {
+        return fn.contraMap((Fn1<? super Comonad<A, W>, ? extends WA>) Downcast::downcast)::apply;
     }
 }

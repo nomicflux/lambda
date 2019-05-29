@@ -1,11 +1,11 @@
 package com.jnape.palatable.lambda.functor.builtin;
 
 import com.jnape.palatable.lambda.comonad.Comonad;
+import com.jnape.palatable.lambda.comonad.builtin.ComonadTraced;
 import com.jnape.palatable.lambda.functions.Fn1;
-import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.monoid.Monoid;
 
-public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Traced<A, M, ?>> {
+public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Traced<A, M, ?>>, ComonadTraced<A, M, B, Traced<A, M, ?>> {
     private Fn1<? super A, ? extends B> trace;
     private Monoid<A> aMonoid;
 
@@ -16,6 +16,15 @@ public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Trace
 
     public static <A, M extends Monoid<A>, B> Traced<A, M, B> traced(Fn1<? super A, ? extends B> t, Monoid<A> m) {
         return new Traced<>(t, m);
+    }
+
+    public final B runTrace(A a) {
+        return trace.apply(a);
+    }
+
+    @Override
+    public Monoid<A> getMonoid() {
+        return aMonoid;
     }
 
     @Override

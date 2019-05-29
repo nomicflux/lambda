@@ -51,7 +51,7 @@ public class ComonadLaws<W extends Comonad<?, W>> implements Trait<Comonad<?, W>
 
     private Maybe<String> testDuplicate(Comonad<?, W> w) {
         Comonad<Comonad<Object, W>, W> wwa = Comonad.duplicate(w).fmap(wa -> wa.fmap(upcast()));
-        boolean equals = wwa.equals(w);
+        boolean equals = wwa.extract().equals(w);
         return equals
                 ? nothing()
                 : just("duplicate: (Comonad.duplicate(w).extract()).equals(w)");

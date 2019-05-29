@@ -1,57 +1,43 @@
 package testsupport;
 
+import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
-import com.jnape.palatable.lambda.functor.Applicative;
-import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.Objects;
 
-public final class EquatableM<M extends Monad<?, M>, A> implements Monad<A, EquatableM<M, ?>> {
+import static com.jnape.palatable.lambda.functions.Fn1.fn1;
 
-    private final Monad<A, M>       ma;
-    private final Fn1<? super M, ?> equatable;
+public final class EquatableW<W extends Comonad<?, W>, A> implements Comonad<A, EquatableW<W, ?>> {
 
-    public EquatableM(Monad<A, M> ma, Fn1<? super M, ?> equatable) {
-        this.ma = ma;
+    private final Comonad<A, W> wa;
+    private final Fn1<? super W, ?> equatable;
+
+    public EquatableW(Comonad<A, W> wa, Fn1<? super W, ?> equatable) {
+        this.wa = wa;
         this.equatable = equatable;
     }
 
     @Override
-    public <B> EquatableM<M, B> flatMap(Fn1<? super A, ? extends Monad<B, EquatableM<M, ?>>> f) {
-        return new EquatableM<>(ma.flatMap(f.fmap(x -> x.<EquatableM<M, B>>coerce().ma)), equatable);
+    public A extract() {
+        return wa.extract();
     }
 
     @Override
-    public <B> EquatableM<M, B> pure(B b) {
-        return new EquatableM<>(ma.pure(b), equatable);
+    public <B> Comonad<B, EquatableW<W, ?>> extendImpl(Fn1<? super Comonad<A, EquatableW<W, ?>>, ? extends B> f) {
+        return new EquatableW<>(wa.extendImpl(f.contraMap(fn1(eq -> new EquatableW<>(eq, equatable)))), equatable);
     }
 
     @Override
-    public <B> EquatableM<M, B> fmap(Fn1<? super A, ? extends B> fn) {
-        return new EquatableM<>(ma.fmap(fn), equatable);
-    }
-
-    @Override
-    public <B> EquatableM<M, B> zip(Applicative<Fn1<? super A, ? extends B>, EquatableM<M, ?>> appFn) {
-        return new EquatableM<>(ma.zip(appFn.<EquatableM<M, Fn1<? super A, ? extends B>>>coerce().ma), equatable);
-    }
-
-    @Override
-    public <B> EquatableM<M, B> discardL(Applicative<B, EquatableM<M, ?>> appB) {
-        return new EquatableM<>(ma.discardL(appB.<EquatableM<M, B>>coerce().ma), equatable);
-    }
-
-    @Override
-    public <B> EquatableM<M, A> discardR(Applicative<B, EquatableM<M, ?>> appB) {
-        return new EquatableM<>(ma.discardR(appB.<EquatableM<M, B>>coerce().ma), equatable);
+    public <B> EquatableW<W, B> fmap(Fn1<? super A, ? extends B> fn) {
+        return new EquatableW<>(wa.fmap(fn), equatable);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object other) {
-        if (other instanceof EquatableM<?, ?>) {
-            EquatableM<M, ?> that = (EquatableM<M, ?>) other;
-            return Objects.equals(equatable.apply((M) ma), that.equatable.apply((M) that.ma));
+        if (other instanceof EquatableW<?, ?>) {
+            EquatableW<W, ?> that = (EquatableW<W, ?>) other;
+            return Objects.equals(equatable.apply((W) wa), that.equatable.apply((W) that.wa));
         }
         return false;
     }
