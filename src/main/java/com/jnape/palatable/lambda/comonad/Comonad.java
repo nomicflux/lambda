@@ -16,7 +16,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * Comonad laws:
  * <ul>
  * <li>left identity: <code>w.extend(wa -&gt; wa.extract()).equals(w)</code></li>
- * <li>right identity: <code>w.extend(f).extract().equals(a -&gt; f.apply(a))</code></li>
+ * <li>right identity: <code>w.extend(f).extract().equals(f.apply(w))</code></li>
  * <li>associativity: <code>w.extend(f).extend(g).equals(w.extend(wa -&gt; g(wa.extend(f))))</code></li>
  * </ul>
  *
@@ -33,16 +33,12 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
     A extract();
 
     /**
-     * Extend a function Fn&lt;Comonad&lt;A, W&gt;, B&gt; over a Comonad.  This allows for computations which use global knowledge to yield a local result.
-     * <p>
-     * For example, think of blurring an image, where the new pixel relies on the surrounding pixels, or of producing the next step in a generic cellular automaton.
+     * A version of {@link Comonad#extend} to be implemented by a class extending the interface; {@link Comonad#extend}
+     * takes care of some of the type inference based off of this method.  See {@link Comonad#extend} for details.
      *
      * @param f      the function using the global state Comonad&lt;A, W&gt; to produce a B
      * @param <B>    the resulting B at each point in the resulting Comonad&lt;B, W&gt;
-     * @return the new Comonad instance
-     *
-     * Default implementation in terms of duplicate would be `return this.duplicate().fmap(f);`
-     *
+     * @return       the new Comonad instance
      */
    <B> Comonad<B, W> extendImpl(Fn1<? super Comonad<A, W>, ? extends B> f);
 
@@ -53,6 +49,7 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
      *
      * @param f      the function using the global state Comonad&lt;A, W&gt; to produce a B
      * @param <B>    the resulting B at each point in the resulting Comonad&lt;B, W&gt;
+     * @param <WA>   the type of the initial Comonad&lt;A, W&gt;
      * @return the new Comonad instance
      *
      * Default implementation in terms of duplicate would be `return this.duplicate().fmap(f);`
@@ -81,7 +78,9 @@ public interface Comonad<A, W extends Comonad<?, W>> extends Functor<A, W> {
     * However, it might be better to reverse this for `Comonad`, as there may be a more natural definition for `duplicate` in an implementation for the interface.
     * <p>
     *
-    *
+    * @param w     the Comonad to be duplicated
+    * @param <A>   the value type of the Comonad
+    * @param <W>   the Comonad unification parameter
     * @return the unfolded Comonad across all possible cursors
    */
    static <A, W extends Comonad<?, W>> Comonad<Comonad<A, W>, W> duplicate(Comonad<A, W> w) {

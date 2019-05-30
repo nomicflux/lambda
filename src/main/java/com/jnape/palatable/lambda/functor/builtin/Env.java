@@ -12,7 +12,13 @@ import java.util.Objects;
 import static com.jnape.palatable.lambda.adt.hlist.HList.tuple;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 
-public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, Env<E, ?>>, Product2<E, A> {
+/**
+ * A concrete implementation of the {@link ComonadEnv} interface.
+ *
+ * @param <E> the environment type
+ * @param <A> the value type
+ */
+public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, Env<E, ?>> {
     private E env;
     private A value;
 
@@ -21,53 +27,78 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, 
         this.value = a;
     }
 
-    public static <E, Z> Env<E, Z> env(E env, Z value) {
+    /**
+     * Constructor function for an Env.
+     *
+     * @param env    the environment provided as context to value
+     * @param value  the primary value to be extracted
+     * @param <E>    the type of the environment
+     * @param <A>    the type of the value
+     * @return       a new instance of Env&lt;E, A&gt;
+     */
+    public static <E, A> Env<E, A> env(E env, A value) {
         return new Env<>(env, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final E ask() {
         return this.env;
     };
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final <R> R asks(Fn1<? super E, ? extends R> f) {
         return f.apply(this.ask());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <R> Env<R, A> mapEnv(Fn1<? super E, ? extends R> f) {
+        return env(f.apply(this.env), value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public A extract() {
         return this.value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <B> Comonad<B, Env<E, ?>> extendImpl(Fn1<? super Comonad<A, Env<E, ?>>, ? extends B> f) {
         return env(env, f.apply(this));
     }
 
-    @Override
-    public E _1() {
-        return env;
-    }
-
-    @Override
-    public A _2() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return env.toString() + ": " + value.toString();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object other) {
         return other instanceof Env && Objects.equals(value, ((Env) other).value) && Objects.equals(env, ((Env) other).env);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(tuple(env, value));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <B> Env<E, B> fmap(Fn1<? super A, ? extends B> fn) {
         return env(env, fn.apply(value));

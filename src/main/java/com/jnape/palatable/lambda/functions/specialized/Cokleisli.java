@@ -5,8 +5,8 @@ import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.builtin.fn1.Downcast;
 
 /**
- * The Cokleisli arrow of a {@link Comonad}, manifest as simply an <code>{@link Fn1}&lt;WA, B&gt;</code>. This can be
- * thought of as a fixed, portable {@link Comonad#extend(Fn1)}.
+ * The Cokleisli arrow of a {@link Comonad}, as a convenience wrapper around a <code>{@link Fn1}&lt;WA, B&gt;</code>.
+ * This can be thought of as a fixed, portable {@link Comonad#extend(Fn1)}.
  *
  * @param <A>  the extraction value of the input {@link Comonad}
  * @param <W>  the {@link Comonad} unification parameter
@@ -44,6 +44,7 @@ public interface Cokleisli<A, B, W extends Comonad<?, W>> extends Fn1<Comonad<A,
      * @param <A>  the input parameter type
      * @param <B>  the output argument type
      * @param <W>  the {@link Comonad} unification parameter
+     * @param <WA> the input {@link Comonad} type
      * @return the function adapted as a {@link Cokleisli} arrow
      */
     static <A, B, W extends Comonad<?, W>, WA extends Comonad<A, W>> Cokleisli<A, B, W> cokleisli(Fn1<? super WA, ? extends B> fn) {
