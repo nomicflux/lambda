@@ -2,7 +2,6 @@ package com.jnape.palatable.lambda.adt.hlist;
 
 import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.product.Product3;
-import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;

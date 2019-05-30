@@ -2,14 +2,11 @@ package com.jnape.palatable.lambda.adt.hlist;
 
 import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.hlist.HList.HNil;
-import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.builtin.Lazy;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
-
-import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
 
 /**
  * A singleton HList. Supports random access.
