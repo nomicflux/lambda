@@ -63,7 +63,23 @@ public final class Store<S, A> implements Comonad<A, Store<S, ?>>, ComonadStore<
      * {@inheritDoc}
      */
     @Override
+    public <B> Store<S, B> fmap(Fn1<? super A, ? extends B> fn) {
+        return ComonadStore.super.<B>fmap(fn).coerce();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <B> Comonad<B, Store<S, ?>> extendImpl(Fn1<? super Comonad<A, Store<S, ?>>, ? extends B> f) {
         return store(s -> f.apply(store(storage, s)), cursor);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <B, WA extends Comonad<A, Store<S, ?>>> Store<S, B> extend(Fn1<? super WA, ? extends B> f) {
+        return ComonadStore.super.<B, WA>extend(f).coerce();
     }
 }

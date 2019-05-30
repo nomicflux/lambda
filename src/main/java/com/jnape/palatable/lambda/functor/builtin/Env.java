@@ -5,6 +5,7 @@ import com.jnape.palatable.lambda.comonad.Comonad;
 import com.jnape.palatable.lambda.comonad.builtin.ComonadEnv;
 import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.builtin.fn1.Id;
+import com.jnape.palatable.lambda.functor.Bifunctor;
 import com.jnape.palatable.lambda.functor.Functor;
 
 import java.util.Objects;
@@ -18,7 +19,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <E> the environment type
  * @param <A> the value type
  */
-public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, Env<E, ?>> {
+public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, Env<E, ?>>, Bifunctor<E, A, Env<?, ?>> {
     private E env;
     private A value;
 
@@ -26,6 +27,7 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, 
         this.env = e;
         this.value = a;
     }
+
 
     /**
      * Constructor function for an Env.
@@ -76,8 +78,48 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, 
      * {@inheritDoc}
      */
     @Override
+    public <B, WA extends Comonad<A, Env<E, ?>>> Env<E, B> extend(Fn1<? super WA, ? extends B> f) {
+        return ComonadEnv.super.<B, WA>extend(f).coerce();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <B> Comonad<B, Env<E, ?>> extendImpl(Fn1<? super Comonad<A, Env<E, ?>>, ? extends B> f) {
         return env(env, f.apply(this));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <B> Env<E, B> fmap(Fn1<? super A, ? extends B> fn) {
+        return env(env, fn.apply(value));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <R> Env<R, A> biMapL(Fn1<? super E, ? extends R> fn) {
+        return mapEnv(fn);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <C> Env<E, C> biMapR(Fn1<? super A, ? extends C> fn) {
+        return fmap(fn);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <R, C> Env<R, C> biMap(Fn1<? super E, ? extends R> lFn, Fn1<? super A, ? extends C> rFn) {
+        return env(lFn.apply(env), rFn.apply(value));
     }
 
     /**
@@ -94,13 +136,5 @@ public final class Env<E, A> implements Comonad<A, Env<E, ?>>, ComonadEnv<E, A, 
     @Override
     public int hashCode() {
         return Objects.hash(tuple(env, value));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <B> Env<E, B> fmap(Fn1<? super A, ? extends B> fn) {
-        return env(env, fn.apply(value));
     }
 }

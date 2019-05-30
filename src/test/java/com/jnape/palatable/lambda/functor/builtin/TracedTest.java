@@ -20,9 +20,9 @@ import static junit.framework.TestCase.assertEquals;
 
 @RunWith(Traits.class)
 public class TracedTest {
-    Monoid<Object> objectMonoid = Monoid.monoid((o1, o2) -> o1, new Object());
-    Monoid<String> stringMonoid = Monoid.monoid((s1, s2) -> s1 + s2, "");
-    Monoid<Integer> productMonoid = Monoid.monoid((i1, i2) -> i1 * i2, 1);
+    private Monoid<Object> objectMonoid = Monoid.monoid((o1, o2) -> o1, new Object());
+    private Monoid<String> stringMonoid = Monoid.monoid((s1, s2) -> s1 + s2, "");
+    private Monoid<Integer> productMonoid = Monoid.monoid((i1, i2) -> i1 * i2, 1);
 
     @TestTraits({FunctorLaws.class, ComonadLaws.class})
     public EquatableW<Traced<Object, Monoid<Object>, ?>, ?> testSubject() {

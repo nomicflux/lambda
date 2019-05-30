@@ -55,6 +55,14 @@ public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Trace
      * {@inheritDoc}
      */
     @Override
+    public <C> Comonad<C, Traced<A, M, ?>> fmap(Fn1<? super B, ? extends C> fn) {
+        return ComonadTraced.super.<C>fmap(fn).coerce();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public B extract() {
         return trace.apply(aMonoid.identity());
     }
@@ -63,7 +71,15 @@ public final class Traced<A, M extends Monoid<A>, B> implements Comonad<B, Trace
      * {@inheritDoc}
      */
     @Override
-    public <B1> Comonad<B1, Traced<A, M, ?>> extendImpl(Fn1<? super Comonad<B, Traced<A, M, ?>>, ? extends B1> f) {
+    public <C> Comonad<C, Traced<A, M, ?>> extendImpl(Fn1<? super Comonad<B, Traced<A, M, ?>>, ? extends C> f) {
         return traced(a -> f.apply(traced(trace.diMapL(aMonoid.apply(a)), aMonoid)), aMonoid);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <C, WA extends Comonad<B, Traced<A, M, ?>>> Traced<A, M, C> extend(Fn1<? super WA, ? extends C> f) {
+        return ComonadTraced.super.<C, WA>extend(f).coerce();
     }
 }
