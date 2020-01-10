@@ -1,6 +1,7 @@
 package com.jnape.palatable.lambda.kan;
 
 import com.jnape.palatable.lambda.functions.Fn1;
+import com.jnape.palatable.lambda.functions.specialized.Pure;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.builtin.Lazy;
@@ -11,6 +12,10 @@ public interface Codensity<F extends Functor<?, F>, A> extends
         Monad<A, Codensity<F, ?>> {
     default <R, FR extends Functor<R, F>> Fn1<Fn1<? super A, ? extends FR>, ? extends FR> runCodensity() {
         return this::ran;
+    }
+
+    default <FA extends Functor<A, F>> FA lowerCodensity(Pure<F> pure) {
+        return this.<A, FA>runCodensity().apply(pure::apply);
     }
 
     @Override
