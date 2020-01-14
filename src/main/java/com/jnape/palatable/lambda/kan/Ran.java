@@ -5,7 +5,7 @@ import com.jnape.palatable.lambda.functor.Functor;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 
-public interface Ran<F extends Functor<?, F>, G extends Functor<?, G>, A> {
+public interface Ran<F extends Functor<?, F>, G extends Functor<?, G>, A> extends Functor<A, Ran<F, G, ?>> {
     default <R, FR extends Functor<R, F>, GR extends Functor<R, G>> Fn1<Fn1<? super A, ? extends FR>, ? extends GR> ran() {
         return this::ran;
     }
@@ -16,7 +16,8 @@ public interface Ran<F extends Functor<?, F>, G extends Functor<?, G>, A> {
         return fa.<A, FA, GA>ran().apply(id());
     }
 
-    default <B> Ran<F, G, B> map(Fn1<? super A, ? extends B> fn) {
+    @Override
+    default <B> Ran<F, G, B> fmap(Fn1<? super A, ? extends B> fn) {
         return new Ran<F, G, B>() {
 
             @Override
