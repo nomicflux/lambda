@@ -13,12 +13,9 @@ import com.jnape.palatable.lambda.monad.MonadRec;
 
 import static com.jnape.palatable.lambda.adt.Maybe.pureMaybe;
 import static com.jnape.palatable.lambda.adt.Unit.UNIT;
-import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Repeat.repeat;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Take.take;
 import static com.jnape.palatable.lambda.functions.builtin.fn3.FoldLeft.foldLeft;
-import static com.jnape.palatable.lambda.functions.recursion.RecursiveResult.terminate;
-import static com.jnape.palatable.lambda.functions.recursion.Trampoline.trampoline;
 
 public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Codensity<F, ?>> {
     default <R, FR extends Functor<R, F>> Fn1<Fn1<? super A, ? extends FR>, ? extends FR> runCodensity() {
@@ -87,12 +84,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
             @Override
             public <R, FR extends Functor<R, F>> FR runCodensity(Fn1<? super B, ? extends FR> k) {
-                return Codensity.this
-                        .<R, FR>runCodensity(f.fmap(mb -> mb.<Codensity<F, B>>coerce()
-                                .fmap(k)
-                                .<FR>fmap(Functor::coerce)
-                                .runCodensity(id())))
-                        .coerce();
+                return Codensity.this.runCodensity(a -> f.apply(a).<Codensity<F, B>>coerce().runCodensity(k));
             }
         };
     }
