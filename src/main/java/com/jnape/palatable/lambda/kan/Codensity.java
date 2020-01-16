@@ -16,6 +16,7 @@ import static com.jnape.palatable.lambda.adt.Unit.UNIT;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Repeat.repeat;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Take.take;
 import static com.jnape.palatable.lambda.functions.builtin.fn3.FoldLeft.foldLeft;
+import static com.jnape.palatable.lambda.functions.recursion.Trampoline.trampoline;
 
 public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Codensity<F, ?>> {
     default <R, FR extends Functor<R, F>> Fn1<Fn1<? super A, ? extends FR>, ? extends FR> runCodensity() {
@@ -30,7 +31,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
         return new Ran<F, F, A>() {
 
             @Override
-            public <R, FR extends Functor<R, F>, FFR extends Functor<R, F>> FFR ran(Fn1<? super A, ? extends FR> k) {
+            public <R, FR extends Functor<R, F>, FFR extends Functor<R, F>> FFR runRan(Fn1<? super A, ? extends FR> k) {
                 return Codensity.this.runCodensity(k).coerce();
             }
         };
@@ -50,7 +51,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
             @Override
             public <R, FR extends Functor<R, F>> FR runCodensity(Fn1<? super A, ? extends FR> k) {
-                return ran.ran(k).coerce();
+                return ran.runRan(k).coerce();
             }
         };
     }
@@ -68,12 +69,36 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
     <R, FR extends Functor<R, F>> FR runCodensity(Fn1<? super A, ? extends FR> k);
 
     @Override
-    default <B> Codensity<F, B> trampolineM(Fn1<? super A, ? extends MonadRec<RecursiveResult<A, B>, Codensity<F, ?>>> fn) {
+    default <B> Codensity<F, B> trampolineM(Fn1<? super A, ? extends MonadRec<RecursiveResult<A, B>, Codensity<F, ?>>> f) {
         return new Codensity<F, B>() {
 
             @Override
             public <R, FR extends Functor<R, F>> FR runCodensity(Fn1<? super B, ? extends FR> k) {
-                return null;
+
+                Fn1<Codensity<F, A>, RecursiveResult<Codensity<F, A>, Codensity<F, B>>> g = crr -> {
+                    crr.fmap(a -> {
+                        Codensity<F, RecursiveResult<A, B>> apply = f.apply(a).coerce();
+                        return null;
+                    });
+                    RecursiveResult<Codensity<F, A>, Codensity<F, B>> o = null;
+                    return o;
+                };
+
+                FR fr = trampoline(g).apply(Codensity.this).runCodensity(k);
+
+                return Codensity.this.runCodensity(a -> {
+                    Codensity<F, RecursiveResult<A, B>> apply = f.apply(a).coerce();
+
+                    Fn1<? super A, ? extends RecursiveResult<A, B>> grr = a2 -> {
+                        Codensity<F, RecursiveResult<A, B>> apply2 = f.apply(a2).coerce();
+
+                        RecursiveResult<A, B> o = null;
+                        return o;
+                    };
+                    Fn1<? super A, ? extends B> g = trampoline(grr);
+                    Fn1<? super RecursiveResult<A, B>, ? extends FR> fg = rr -> rr.match(g.fmap(k), k);
+                    return apply.runCodensity(fg);
+                });
             }
         };
     }
@@ -112,9 +137,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
     @Override
     default <B> Lazy<? extends Codensity<F, B>> lazyZip(Lazy<? extends Applicative<Fn1<? super A, ? extends B>, Codensity<F, ?>>> lazyAppFn) {
-        return MonadRec.super.lazyZip(lazyAppFn).fmap(f -> {
-            return f.<Codensity<F, B>>coerce();
-        });
+        return MonadRec.super.lazyZip(lazyAppFn).fmap(f -> f.<Codensity<F, B>>coerce());
     }
 
     @Override
@@ -129,7 +152,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
     public static void main(String[] args) {
         Codensity<Maybe<?>, Integer> codensity = codensity(0);
-        Codensity<Maybe<?>, Integer> maybeIntegerCodensity = foldLeft((cd, n) -> cd.flatMap(a -> codensity(a + n)), codensity, take(1000, repeat(1)));
+        Codensity<Maybe<?>, Integer> maybeIntegerCodensity = foldLeft((cd, n) -> cd.flatMap(a -> codensity(a + n)), codensity, take(10000, repeat(1)));
 
         Maybe<Integer> integerMaybeFunctor = maybeIntegerCodensity.lower(pureMaybe());
         System.out.println(integerMaybeFunctor);
