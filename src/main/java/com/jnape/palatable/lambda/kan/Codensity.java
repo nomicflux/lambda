@@ -74,7 +74,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
             @Override
             public <R, FR extends Functor<R, F>> FR runCodensity(Fn1<? super B, ? extends FR> k) {
-
+                // Trampolining based on Codensity directly
                 Fn1<Codensity<F, A>, RecursiveResult<Codensity<F, A>, Codensity<F, B>>> g = crr -> {
                     crr.fmap(a -> {
                         Codensity<F, RecursiveResult<A, B>> apply = f.apply(a).coerce();
@@ -86,6 +86,7 @@ public interface Codensity<F extends Functor<?, F>, A> extends MonadRec<A, Coden
 
                 FR fr = trampoline(g).apply(Codensity.this).runCodensity(k);
 
+                // Trampolining based on inner A/B
                 return Codensity.this.runCodensity(a -> {
                     Codensity<F, RecursiveResult<A, B>> apply = f.apply(a).coerce();
 
